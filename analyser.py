@@ -13,7 +13,7 @@ def calculate_table(table):
     purchase_table = table[table['The methods of Acquisition/Disposition']=='Purchase']
     buy_table = buy_table.append(purchase_table)
     buy_table.sort_index(inplace=True)
-    buy_value_series = buy_table['Average Price (baht)']*buy_table['Amount']
+    buy_value_series = buy_table['Average Price (baht)'].astype(float)*buy_table['Amount'].astype(int)
     buy_value_series = buy_value_series.groupby(level=0).sum()
 
     #sell
@@ -21,7 +21,7 @@ def calculate_table(table):
     sale_table = table[table['The methods of Acquisition/Disposition']=='Sale']
     sell_table = sell_table.append(sale_table)
     sell_table.sort_index(inplace=True)
-    sell_value_series = sell_table['Average Price (baht)']*sell_table['Amount']
+    sell_value_series = sell_table['Average Price (baht)'].astype(float)*sell_table['Amount'].astype(int)
     sell_value_series = sell_value_series.groupby(level=0).sum()
     
     return [buy_value_series, sell_value_series]
@@ -44,11 +44,8 @@ if __name__ == '__main__':
     insider_volume = pd.read_csv('data/form59.csv')
 
     #list tickers
-    tickers = pd.read_csv('tickers.csv', sep=', ', header=None)
-    tickers = tickers.values[0]
-
     tickers = ['TTA', 'PTT']
     for ticker in tickers:
         ticker_form59 = insider_volume[insider_volume['Name of Company'] == ticker]
-        h = high_insider_buy(ticker_form59, 30, 1000000)
+        h = high_insider_buy(ticker_form59, 300, 10000)
         print(h)
