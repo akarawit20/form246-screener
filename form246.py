@@ -6,8 +6,9 @@ def format_date(id):
     d, m, y = id.split('/')
     return '{}-{}-{}'.format(y, m, d)
 
+#object containing form256
 class Form246:
-    def __init__(self, start_date='20200101', end_date='20990101'):
+    def __init__(self, start_date='20220101', end_date='20230101'):
         self.start_date = start_date
         self.end_date = end_date
         
@@ -15,20 +16,30 @@ class Form246:
         table = pd.read_html(url)[0]
         self.table = table
 
+    #list all distinct traders
     def list_trader(self):
         return list(set(self.table['Name of Acquisition/Disposition']))
 
+    #list all distinct tickers
     def list_ticker(self):
         return list(set(self.table['Name of Company']))
 
-    def trader_transaction(self, trader):
+    #list all trades by a specific trader
+    def filter_trader(self, trader):
         trader_transactions = self.table[self.table['Name of Acquisition/Disposition']==trader]
-        trader_transactions['dates'] = trader_transactions['Transaction Date'].map(format_date)
+        trader_transactions['dates'] = trader_transactions['Transaction Date'].map(format_date)  #clean dates
         
         return trader_transactions[['Name of Securities', 'Types', 'dates']].set_index('dates')
 
+    def filter_ticker(self, ticker):
+        trader_transactions = self.table[self.table['Name of Securities']==ticker]
+        trader_transactions['dates'] = trader_transactions['Transaction Date'].map(format_date)  #clean dates
+        
+        return trader_transactions[['Name of Acquisition/Disposition', 'Types', 'dates']].set_index('dates')
+
 if __name__ == '__main__':
-    test = Form246().trader_transaction('BBL ASSET MANAGEMENT COMPANY LIMITED')
+    #download form246 into object
+    form246 = Form246()
     print(test)
 
 '''
