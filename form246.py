@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime
-import analyser
+
 
 def format_date(id):
     d, m, y = id.split('/')
